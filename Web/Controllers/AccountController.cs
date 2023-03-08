@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Web.DbContexts;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -7,6 +8,12 @@ namespace Web.Controllers;
 [Route("accounts")]
 public class AccountController : ControllerBase
 {
+
+    readonly OverallContext _context;
+    public AccountController(OverallContext context)
+    {
+        _context = context;
+    }
     [HttpGet("{accountId}")]
     public IActionResult Get(int accountId)
     {

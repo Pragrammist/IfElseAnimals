@@ -59,7 +59,7 @@ public class AnimalController : ControllerBase
     public IActionResult PutAnimalType([FromBody]UpdateAnimalTypeModel search)   
     {
         return new ObjectResult(new AnimalModel {
-            Id = search.Id
+            Id = search.AnimalId
         });
     }
 

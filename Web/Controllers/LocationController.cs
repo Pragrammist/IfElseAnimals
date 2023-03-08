@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Web.DbContexts;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -7,42 +8,41 @@ namespace Web.Controllers;
 [Route("locations")]
 public class LocationController : ControllerBase
 {
-    [HttpGet("{pointId}")]
-    public IActionResult Get(long pointId)
+    readonly OverallContext _context;
+    public LocationController(OverallContext context)
     {
-        return new ObjectResult(new LocationModel {
-            Id = 1L,
-            Latitude = 1D   ,
-            Longitude = 1D
-        });
+        _context = context;
+    }
+    [HttpGet("{pointId}")]
+    public async Task<IActionResult> GetAsync(long pointId)
+    {
+        var ent = await _context.LocationPoints.FindAsync(pointId) ?? throw new Exception();
+        return new ObjectResult(ent.AdaptToModel());
     }
     [HttpPost]
-    public IActionResult Post([FromBody]CreateLocationModel model)
+    public async Task<IActionResult> PostAsync([FromBody]CreateLocationModel model)
     {
-        return new ObjectResult(new LocationModel {
-            Id = 1L,
-            Latitude = 1D   ,
-            Longitude = 1D
-        });
+        var ent = model.AdaptToLocationPoint();
+        await _context.LocationPoints.AddAsync(ent);
+        await _context.SaveChangesAsync();
+        return new ObjectResult(ent.AdaptToModel());
     }
     [HttpPut("{pointId}")]
-    public IActionResult Put([FromBody]UpdatedLocationModel model)
+    public async Task<IActionResult> PutAsync(long pointId, [FromBody]UpdatedLocationModel model)
     {
-        
-        return new ObjectResult(new LocationModel {
-            Id = 1L,
-            Latitude = 1D   ,
-            Longitude = 1D
-        });
+        model.PointId = pointId;
+        var ent = model.AdaptToLocationPoint();
+        _context.LocationPoints.Update(ent);
+        await _context.SaveChangesAsync();
+        return new ObjectResult(ent.AdaptToModel());
     }
     [HttpDelete("{pointId}")]
-    public IActionResult Delete(long pointId)
+    public async Task<IActionResult> DeleteAsync(long pointId)
     {
-        return new ObjectResult(new LocationModel {
-            Id = 1L,
-            Latitude = 1D   ,
-            Longitude = 1D
-        });
+        var ent = await _context.LocationPoints.FindAsync(pointId) ?? throw new Exception();
+        _context.Remove(ent);
+        await _context.SaveChangesAsync();
+        return new ObjectResult(ent.AdaptToModel());
     }
 }
 
@@ -53,32 +53,10 @@ public class LocationController : ControllerBase
 [Route("registration")]
 public class AuthController : ControllerBase
 {
+    [HttpPost]
+    public IActionResult Post()
+    {
+        return Ok();
+    }
     
-    public IActionResult Post([FromBody]CreateLocationModel model)
-    {
-        return new ObjectResult(new LocationModel {
-            Id = 1L,
-            Latitude = 1D   ,
-            Longitude = 1D
-        });
-    }
-    [HttpPut("{pointId}")]
-    public IActionResult Put([FromBody]UpdatedLocationModel model)
-    {
-        
-        return new ObjectResult(new LocationModel {
-            Id = 1L,
-            Latitude = 1D   ,
-            Longitude = 1D
-        });
-    }
-    [HttpDelete("{pointId}")]
-    public IActionResult Delete(long pointId)
-    {
-        return new ObjectResult(new LocationModel {
-            Id = 1L,
-            Latitude = 1D   ,
-            Longitude = 1D
-        });
-    }
 }

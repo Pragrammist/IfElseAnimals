@@ -1,8 +1,13 @@
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using Web.DbContexts;
+
+namespace Web.Models;
+
 
 public class UpdateAnimalTypeModel
 {
-    [FromRoute(Name = "animalId")]
-    public long Id { get; set; }
+    
+    public long AnimalId { get; set; }
     public string Type { get; set; } = null!;
 }

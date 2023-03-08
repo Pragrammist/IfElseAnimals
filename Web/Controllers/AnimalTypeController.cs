@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Web.DbContexts;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -7,39 +8,44 @@ namespace Web.Controllers;
 [Route("animals/types/")]
 public class AnimalTypeController : ControllerBase
 {
-    [HttpGet("{typeId}")]
-    public IActionResult Get(long typeId)
+    readonly OverallContext _context;
+    public AnimalTypeController(OverallContext context)
     {
-        return new ObjectResult(new AnimalTypeModel {
-            Id = 1,
-            Type = ""
-        });
+        _context = context;
+    }
+
+    [HttpGet("{typeId}")]
+    public async Task<IActionResult> GetAsync(long typeId)
+    {
+        var ent = await _context.AnimalTypes.FindAsync(typeId);
+        return new ObjectResult(ent.AdaptToModel());
     }
 
     [HttpPost]
-    public IActionResult Post([FromBody]CreateAnimalTypeModel model)
+    public async Task<IActionResult> PostAsync([FromBody]CreateAnimalTypeModel model)
     {
-        return new ObjectResult(new AnimalTypeModel {
-            Id = 1,
-            Type = ""
-        });
+        var ent = model.AdaptToAnimalType();
+        await _context.AnimalTypes.AddAsync(ent);
+        await _context.SaveChangesAsync();
+        return new ObjectResult(ent);
     }
 
-    [HttpPut]
-    public IActionResult Put([FromBody]UpdateAnimalTypeModel model)
+    [HttpPut("{animalId}")]
+    public async Task<IActionResult> PutAsync(long animalId, [FromBody]UpdateAnimalTypeModel model)
     {
-        return new ObjectResult(new AnimalTypeModel {
-            Id = 1,
-            Type = ""
-        });
+        model.AnimalId = animalId;
+        var ent = model.AdaptToAnimalType();
+        _context.Update(ent);
+        await _context.SaveChangesAsync();
+        return new ObjectResult(ent);
     }
 
     [HttpDelete("{typeId}")]
-    public IActionResult Delete(long typeId)
+    public async Task<IActionResult> DeleteAsync(long typeId)
     {
-        return new ObjectResult(new AnimalTypeModel {
-            Id = 1,
-            Type = ""
-        });
+        var ent = await _context.AnimalTypes.FindAsync(typeId) ?? throw new Exception("");
+        _context.AnimalTypes.Remove(ent);
+        await _context.SaveChangesAsync();
+        return new ObjectResult(ent);
     }
 }

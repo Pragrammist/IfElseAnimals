@@ -1,6 +1,6 @@
-
-
+using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Web.Models;
 
 namespace Web.DbContexts;
 
@@ -60,6 +60,8 @@ public class Animal
 
 public class LocationAndAnimal 
 {
+    public long Id { get; set; }
+    
     public long AnimalId { get; set; }
 
     public DateTime DateTimeOfVisitLocationPoint { get; set; }
@@ -67,6 +69,7 @@ public class LocationAndAnimal
     public long LocationPointId { get; set; }
 }
 
+[AdaptTo(nameof(LocationPointModel)), GenerateMapper]
 public class LocationPoint
 {
     public long Id { get; set; }
@@ -74,6 +77,7 @@ public class LocationPoint
     public double Longitude { get; set; }
 }
 
+[AdaptTo(nameof(AnimalTypeModel)), GenerateMapper]
 public class AnimalType
 {
     public long Id { get; set; }
@@ -82,9 +86,9 @@ public class AnimalType
 
 
 
-public class AnimalContext : DbContext
+public class OverallContext : DbContext
 {
-    public AnimalContext(DbContextOptions<AnimalContext> options) : base(options)
+    public OverallContext(DbContextOptions<OverallContext> options) : base(options)
     {
         Database.EnsureCreated();
     }
@@ -93,7 +97,7 @@ public class AnimalContext : DbContext
     {
         modelBuilder.Entity<Animal>().HasMany(p => p.AnimalTypes).WithMany();
         modelBuilder.Entity<Animal>().HasOne(e => e.Chipper).WithMany().HasForeignKey(k => k.ChipperId);
-        modelBuilder.Entity<Animal>().HasOne(e => e.ChippingLocation).WithMany().HasForeignKey(k => k.ChippingLocation);
+        modelBuilder.Entity<Animal>().HasOne(e => e.ChippingLocation).WithMany().HasForeignKey(k => k.ChippingLocationId);
         modelBuilder.Entity<Animal>().HasMany(e => e.VisitedLocations).WithOne().HasForeignKey(k => k.AnimalId);
 
         modelBuilder.Entity<LocationPoint>().HasMany<LocationAndAnimal>().WithOne().HasForeignKey(l => l.LocationPointId);

@@ -9,7 +9,7 @@ var dbCon = builder.Configuration.GetConnectionString("Sqlite");
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<AnimalContext>(opt => opt.UseSqlite(dbCon));
+builder.Services.AddDbContext<OverallContext>(opt => opt.UseSqlite(dbCon));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

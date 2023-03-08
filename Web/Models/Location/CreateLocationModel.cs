@@ -1,4 +1,7 @@
+using Mapster;
+
 namespace Web.Models;
+
 
 public class CreateLocationModel
 {

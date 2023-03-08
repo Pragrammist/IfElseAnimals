@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 namespace Web.Models;
 
-public class UpdateAnimalTypeModel
+public class UpdateAnimalTypeForAnimalModel
 {
     [FromRoute(Name = "animalId")]
     public long Id { get; set; }

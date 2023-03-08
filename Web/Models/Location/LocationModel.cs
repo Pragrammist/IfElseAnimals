@@ -1,6 +1,6 @@
 namespace Web.Models;
 
-public class LocationModel
+public class LocationPointModel
 {
     public long Id { get; set; }
     public double Latitude { get; set; }
