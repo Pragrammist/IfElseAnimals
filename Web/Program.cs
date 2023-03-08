@@ -2,11 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Web.DbContexts;
 
 var builder = WebApplication.CreateBuilder(args);
+var dbCon = builder.Configuration.GetConnectionString("Sqlite");
+
+
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<OverallContex>(opt => opt.UseSqlite("Data source = animalapp.db"));
+builder.Services.AddDbContext<AnimalContext>(opt => opt.UseSqlite(dbCon));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
