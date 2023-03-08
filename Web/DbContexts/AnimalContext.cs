@@ -32,13 +32,13 @@ public class Animal
 
     public DateTime ChippingDateTime { get; set; }
 
-    public int? ChipperId { get; set; } //account
+    public int ChipperId { get; set; } //account
 
-    public Acount? Chipper { get; set; } //account
+    public Acount Chipper { get; set; } = null!;//account
 
-    public long? ChippingLocationId { get; set; } //location
+    public long ChippingLocationId { get; set; } //location
 
-    public LocationPoint? ChippingLocation { get; set; } //location
+    public LocationPoint ChippingLocation { get; set; } = null!; //location
 
     public ICollection<LocationAndAnimal> VisitedLocations { get; set; } = null!;
 

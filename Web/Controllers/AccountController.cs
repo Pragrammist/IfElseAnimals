@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Web.DbContexts;
 using Web.Models;
 
@@ -14,39 +15,43 @@ public class AccountController : ControllerBase
     {
         _context = context;
     }
-    [HttpGet("{accountId}")]
-    public IActionResult Get(int accountId)
+
+    [HttpPost("registration")]
+    public async Task<IActionResult> PostAsync([FromBody]CreateAcountModel acount)
     {
-        return new ObjectResult(new AccountModel {
-            Id = 1,
-            FirstName = "",
-            LastName = "",
-            Email = ""
-        });
+        var ent = acount.AdaptToAcount();
+        await _context.Accounts.AddAsync(ent);
+        await _context.SaveChangesAsync();
+        
+        return new ObjectResult(ent.AdaptToAccountModel());
+    }
+
+    [HttpGet("{accountId}")]
+    public async Task<IActionResult> GetAsync(int accountId)
+    {
+        var ent = await _context.Accounts.FindAsync(accountId);
+        return new ObjectResult(ent.AdaptToAccountModel());
     }
     [HttpGet("search")]
-    public IActionResult Search([FromQuery]SearchAccountModel search)
+    public async Task<IActionResult> SearchAsync([FromQuery]SearchAccountModel search)
     {
-        return new ObjectResult(new AccountModel {
-            Id = 1,
-            FirstName = "",
-            LastName = "",
-            Email = ""
-        });
+        var ent = await _context.Accounts.FirstOrDefaultAsync(ac => search.BuildSearch(ac));
+        return new ObjectResult(ent.AdaptToAccountModel());
     }
     [HttpPut("{accountId}")]
-    public IActionResult Put([FromBody]UpdateAccountModel update)
+    public async Task<IActionResult> PutAsync(int accountId, [FromBody]UpdateAccountModel update)
     {
-        return new ObjectResult(new AccountModel {
-            Id = 1,
-            FirstName = "",
-            LastName = "",
-            Email = ""
-        });
+        var ent = await _context.Accounts.FindAsync(accountId) ?? throw new Exception("");
+        update.UpdateEntity(ent);
+        _context.Accounts.Update(ent);
+        await _context.SaveChangesAsync();
+        return new ObjectResult(ent.AdaptToAccountModel());
     }
     [HttpDelete("{accountId}")]
-    public IActionResult Delete(int accountId)
+    public async Task<IActionResult> DeleteAsync(int accountId)
     {
-        return Ok();
+        var ent = await _context.Accounts.FindAsync(accountId) ?? throw new Exception("");
+        _context.Accounts.Remove(ent);
+        return new ObjectResult(ent.AdaptToAccountModel());
     }
 }
